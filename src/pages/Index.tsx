@@ -5,6 +5,8 @@ import { CSVUploader } from "@/components/CSVUploader";
 import { DashboardStats } from "@/components/DashboardStats";
 import { DeliveryTable } from "@/components/DeliveryTable";
 import { DeliveryChart } from "@/components/DeliveryChart";
+import { AssignmentControls } from "@/components/AssignmentControls";
+import { ManualEditor } from "@/components/ManualEditor";
 import { DeliveryData, AssignedDelivery } from "@/types/delivery";
 import { assignDeliveriesToDrivers, exportToCSV } from "@/utils/deliveryProcessor";
 import { useToast } from "@/hooks/use-toast";
@@ -12,12 +14,36 @@ import { useToast } from "@/hooks/use-toast";
 const Index = () => {
   const [deliveryData, setDeliveryData] = useState<DeliveryData[]>([]);
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
+  const [useDistanceClustering, setUseDistanceClustering] = useState(false);
+  const [showManualEditor, setShowManualEditor] = useState(false);
   const { toast } = useToast();
+
+  const hasCoordinates = deliveryData.some(d => d.latitude && d.longitude);
 
   const handleDataLoaded = (data: DeliveryData[]) => {
     setDeliveryData(data);
-    const assigned = assignDeliveriesToDrivers(data);
+    const assigned = assignDeliveriesToDrivers(data, false);
     setAssignedDeliveries(assigned);
+    setUseDistanceClustering(false);
+  };
+
+  const handleReassign = () => {
+    const assigned = assignDeliveriesToDrivers(deliveryData, useDistanceClustering);
+    setAssignedDeliveries(assigned);
+    toast({
+      title: "Deliveries Re-assigned",
+      description: `Using ${useDistanceClustering ? "distance-based" : "pincode-based"} clustering`,
+    });
+  };
+
+  const handleToggleDistanceClustering = (value: boolean) => {
+    setUseDistanceClustering(value);
+    const assigned = assignDeliveriesToDrivers(deliveryData, value);
+    setAssignedDeliveries(assigned);
+    toast({
+      title: value ? "Distance Clustering Enabled" : "Pincode Clustering Enabled",
+      description: "Deliveries have been re-assigned",
+    });
   };
 
   const handleExport = () => {
@@ -73,6 +99,12 @@ const Index = () => {
             </div>
             <CSVUploader onDataLoaded={handleDataLoaded} />
           </div>
+        ) : showManualEditor ? (
+          <ManualEditor
+            deliveries={assignedDeliveries}
+            onUpdate={setAssignedDeliveries}
+            onClose={() => setShowManualEditor(false)}
+          />
         ) : (
           <>
             <div className="flex items-center justify-between">
@@ -87,7 +119,18 @@ const Index = () => {
               </Button>
             </div>
 
-            <DashboardStats deliveries={assignedDeliveries} />
+            <div className="grid gap-4 lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <DashboardStats deliveries={assignedDeliveries} />
+              </div>
+              <AssignmentControls
+                useDistanceClustering={useDistanceClustering}
+                onToggleDistanceClustering={handleToggleDistanceClustering}
+                onReassign={handleReassign}
+                onManualEdit={() => setShowManualEditor(true)}
+                hasCoordinates={hasCoordinates}
+              />
+            </div>
             
             <DeliveryChart deliveries={assignedDeliveries} />
             

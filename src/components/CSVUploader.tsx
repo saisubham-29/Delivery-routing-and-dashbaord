@@ -41,6 +41,19 @@ export const CSVUploader = ({ onDataLoaded }: CSVUploaderProps) => {
       return false;
     }
 
+    // Check for optional enhanced fields
+    const hasCoordinates = headers.some(h => h.includes("lat")) && headers.some(h => h.includes("lon"));
+    const hasPriority = headers.some(h => h.includes("priority"));
+    
+    if (hasCoordinates || hasPriority) {
+      toast({
+        title: "Enhanced CSV Detected",
+        description: hasCoordinates 
+          ? "Distance-based clustering will be available"
+          : "Priority-based assignment enabled",
+      });
+    }
+
     return true;
   };
 
@@ -161,7 +174,9 @@ export const CSVUploader = ({ onDataLoaded }: CSVUploaderProps) => {
           <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
           <div className="text-left">
             <p className="font-medium mb-1">Required CSV columns:</p>
-            <p>Address, Customer ID, Pincode, Cylinder type</p>
+            <p className="mb-2">Address, Customer ID, Pincode, Cylinder type</p>
+            <p className="font-medium mb-1">Optional columns for enhanced features:</p>
+            <p>Priority (High/Medium/Low), Latitude, Longitude</p>
           </div>
         </div>
       </div>

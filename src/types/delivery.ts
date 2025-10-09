@@ -3,11 +3,15 @@ export interface DeliveryData {
   customerId: string;
   pincode: string;
   cylinderType: string;
+  priority?: "High" | "Medium" | "Low";
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface AssignedDelivery extends DeliveryData {
   driver: string;
   vehicle: string;
+  id: string;
 }
 
 export interface GroupedDeliveries {

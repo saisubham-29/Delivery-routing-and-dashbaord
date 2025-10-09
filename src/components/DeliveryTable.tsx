@@ -47,9 +47,11 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                   <Table>
                     <TableHeader>
                       <TableRow>
+                        <TableHead>ID</TableHead>
                         <TableHead>Customer ID</TableHead>
                         <TableHead>Address</TableHead>
                         <TableHead>Cylinder Type</TableHead>
+                        <TableHead>Priority</TableHead>
                         <TableHead>Driver</TableHead>
                         <TableHead>Vehicle</TableHead>
                       </TableRow>
@@ -57,9 +59,18 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                     <TableBody>
                       {group.deliveries.map((delivery, idx) => (
                         <TableRow key={idx}>
+                          <TableCell className="font-mono text-xs">{delivery.id}</TableCell>
                           <TableCell className="font-medium">{delivery.customerId}</TableCell>
                           <TableCell>{delivery.address}</TableCell>
                           <TableCell>{delivery.cylinderType}</TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              delivery.priority === "High" ? "destructive" :
+                              delivery.priority === "Low" ? "secondary" : "default"
+                            }>
+                              {delivery.priority || "Medium"}
+                            </Badge>
+                          </TableCell>
                           <TableCell>{delivery.driver}</TableCell>
                           <TableCell>{delivery.vehicle}</TableCell>
                         </TableRow>
@@ -89,19 +100,30 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                   <Table>
                     <TableHeader>
                       <TableRow>
+                        <TableHead>ID</TableHead>
                         <TableHead>Customer ID</TableHead>
                         <TableHead>Address</TableHead>
                         <TableHead>Pincode</TableHead>
                         <TableHead>Cylinder Type</TableHead>
+                        <TableHead>Priority</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {group.deliveries.map((delivery, idx) => (
                         <TableRow key={idx}>
+                          <TableCell className="font-mono text-xs">{delivery.id}</TableCell>
                           <TableCell className="font-medium">{delivery.customerId}</TableCell>
                           <TableCell>{delivery.address}</TableCell>
                           <TableCell>{delivery.pincode}</TableCell>
                           <TableCell>{delivery.cylinderType}</TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              delivery.priority === "High" ? "destructive" :
+                              delivery.priority === "Low" ? "secondary" : "default"
+                            }>
+                              {delivery.priority || "Medium"}
+                            </Badge>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -116,10 +138,12 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>ID</TableHead>
                     <TableHead>Customer ID</TableHead>
                     <TableHead>Address</TableHead>
                     <TableHead>Pincode</TableHead>
                     <TableHead>Cylinder Type</TableHead>
+                    <TableHead>Priority</TableHead>
                     <TableHead>Driver</TableHead>
                     <TableHead>Vehicle</TableHead>
                   </TableRow>
@@ -127,10 +151,19 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                 <TableBody>
                   {deliveries.map((delivery, idx) => (
                     <TableRow key={idx}>
+                      <TableCell className="font-mono text-xs">{delivery.id}</TableCell>
                       <TableCell className="font-medium">{delivery.customerId}</TableCell>
                       <TableCell>{delivery.address}</TableCell>
                       <TableCell>{delivery.pincode}</TableCell>
                       <TableCell>{delivery.cylinderType}</TableCell>
+                      <TableCell>
+                        <Badge variant={
+                          delivery.priority === "High" ? "destructive" :
+                          delivery.priority === "Low" ? "secondary" : "default"
+                        }>
+                          {delivery.priority || "Medium"}
+                        </Badge>
+                      </TableCell>
                       <TableCell>{delivery.driver}</TableCell>
                       <TableCell>{delivery.vehicle}</TableCell>
                     </TableRow>
