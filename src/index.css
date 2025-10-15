@@ -98,11 +98,11 @@ All colors MUST be HSL.
 
 @layer utilities {
   .glass {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20;
+    @apply bg-white/80 backdrop-blur-xl border border-white/30 shadow-lg;
   }
   
   .dark .glass {
-    @apply bg-black/20 backdrop-blur-lg border border-white/10;
+    @apply bg-black/40 backdrop-blur-xl border border-white/20 shadow-2xl;
   }
   
   .gradient-primary {

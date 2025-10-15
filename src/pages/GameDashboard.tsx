@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Package, Users, Truck, Upload } from "lucide-react";
+import { Package, Users, Truck, Upload, Table as TableIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AnimatedRoad } from "@/components/AnimatedRoad";
+import { DeliveryTable } from "@/components/DeliveryTable";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers } from "@/utils/deliveryProcessor";
 import { useNavigate } from "react-router-dom";
 
 const GameDashboard = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
+  const [showTableView, setShowTableView] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -85,17 +88,36 @@ const GameDashboard = () => {
           transition={{ delay: 0.3 }}
         >
           <Card className="glass p-8 min-h-[600px]">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold mb-2">Delivery Route Map</h2>
-              <p className="text-muted-foreground">
-                Click on any truck to view driver details and delivery list
-              </p>
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Delivery Route Map</h2>
+                <p className="text-muted-foreground">
+                  Click on any truck to view driver details and delivery list
+                </p>
+              </div>
+              <Button 
+                onClick={() => setShowTableView(true)}
+                className="gap-2 gradient-primary text-white"
+              >
+                <TableIcon className="h-4 w-4" />
+                Table View
+              </Button>
             </div>
             
             <AnimatedRoad deliveries={assignedDeliveries} />
           </Card>
         </motion.div>
       </div>
+
+      {/* Table View Dialog */}
+      <Dialog open={showTableView} onOpenChange={setShowTableView}>
+        <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Delivery Assignments - Table View</DialogTitle>
+          </DialogHeader>
+          <DeliveryTable deliveries={assignedDeliveries} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
