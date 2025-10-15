@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { Truck, Package, Users, MapPin } from "lucide-react";
+import { Truck, Package, Users, MapPin, Navigation, Activity } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers } from "@/utils/deliveryProcessor";
+import { useToast } from "@/hooks/use-toast";
 
 const Vehicles = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     const storedData = sessionStorage.getItem("deliveryData");
@@ -17,6 +20,13 @@ const Vehicles = () => {
       setAssignedDeliveries(assigned);
     }
   }, []);
+
+  const handleTrackVehicle = (vehicle: string) => {
+    toast({
+      title: "Tracking Vehicle",
+      description: `Opening GPS tracker for ${vehicle}...`,
+    });
+  };
 
   // Group by vehicle
   const vehicleGroups = assignedDeliveries.reduce((acc, delivery) => {
@@ -55,6 +65,9 @@ const Vehicles = () => {
             {vehicles.map((vehicle) => {
               const capacity = 35;
               const utilization = (vehicle.deliveries.length / capacity) * 100;
+              const deliveredCount = vehicle.deliveries.filter(d => d.status === "Delivered").length;
+              const inProgressCount = vehicle.deliveries.filter(d => d.status === "In Progress").length;
+              const vehicleStatus = inProgressCount > 0 ? "Active" : "Idle";
               
               return (
                 <Card key={vehicle.vehicle} className="glass hover:glow transition-all">
@@ -64,7 +77,13 @@ const Vehicles = () => {
                         <Truck className="h-6 w-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <CardTitle className="text-lg">{vehicle.vehicle}</CardTitle>
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-lg">{vehicle.vehicle}</CardTitle>
+                          <Badge variant={vehicleStatus === "Active" ? "default" : "secondary"}>
+                            <Activity className="h-3 w-3 mr-1" />
+                            {vehicleStatus}
+                          </Badge>
+                        </div>
                         <p className="text-sm text-muted-foreground">
                           {vehicle.drivers.size} {vehicle.drivers.size === 1 ? 'driver' : 'drivers'}
                         </p>
@@ -82,15 +101,30 @@ const Vehicles = () => {
                       <Progress value={utilization} className="h-2" />
                     </div>
                     
-                    <div className="flex items-center gap-2 text-sm">
-                      <Package className="h-4 w-4 text-muted-foreground" />
-                      <span>{vehicle.deliveries.length} deliveries</span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Package className="h-4 w-4 text-muted-foreground" />
+                        <span>{vehicle.deliveries.length} total</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Package className="h-4 w-4 text-success" />
+                        <span>{deliveredCount} done</span>
+                      </div>
                     </div>
                     
                     <div className="flex items-center gap-2 text-sm">
                       <MapPin className="h-4 w-4 text-muted-foreground" />
                       <span>{new Set(vehicle.deliveries.map(d => d.pincode)).size} pincodes</span>
                     </div>
+
+                    <Button 
+                      className="w-full gap-2" 
+                      variant="outline"
+                      onClick={() => handleTrackVehicle(vehicle.vehicle)}
+                    >
+                      <Navigation className="h-4 w-4" />
+                      Track Location
+                    </Button>
 
                     <div className="pt-3 border-t">
                       <p className="text-xs text-muted-foreground mb-2">Assigned Drivers:</p>

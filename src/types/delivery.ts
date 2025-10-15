@@ -6,6 +6,8 @@ export interface DeliveryData {
   priority?: "High" | "Medium" | "Low";
   latitude?: number;
   longitude?: number;
+  status?: "Pending" | "In Progress" | "Delivered" | "Failed";
+  deliveredAt?: string;
 }
 
 export interface AssignedDelivery extends DeliveryData {

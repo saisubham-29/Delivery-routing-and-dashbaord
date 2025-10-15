@@ -10,8 +10,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import { AssignedDelivery } from "@/types/delivery";
 import { groupByPincode, groupByDriver } from "@/utils/deliveryProcessor";
+import { useToast } from "@/hooks/use-toast";
 
 interface DeliveryTableProps {
   deliveries: AssignedDelivery[];
@@ -19,14 +22,50 @@ interface DeliveryTableProps {
 
 export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
   const [activeTab, setActiveTab] = useState("pincode");
+  const { toast } = useToast();
   
   const pincodeGroups = groupByPincode(deliveries);
   const driverGroups = groupByDriver(deliveries);
 
+  const downloadCSV = () => {
+    const headers = ["ID", "Customer ID", "Address", "Pincode", "Cylinder Type", "Priority", "Driver", "Vehicle", "Status"];
+    const rows = deliveries.map(d => [
+      d.id,
+      d.customerId,
+      d.address,
+      d.pincode,
+      d.cylinderType,
+      d.priority || "Medium",
+      d.driver,
+      d.vehicle,
+      d.status || "Pending"
+    ]);
+    
+    const csvContent = [headers, ...rows].map(row => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `deliveries_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Download Complete",
+      description: "Delivery data exported successfully",
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Delivery Assignments</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Delivery Assignments</CardTitle>
+          <Button onClick={downloadCSV} className="gap-2">
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>

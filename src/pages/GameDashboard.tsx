@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Package, Users, Truck, Upload, Table as TableIcon } from "lucide-react";
+import { Package, Users, Truck, Upload, Table as TableIcon, Edit } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AnimatedRoad } from "@/components/AnimatedRoad";
 import { DeliveryTable } from "@/components/DeliveryTable";
+import { ManualEditor } from "@/components/ManualEditor";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers } from "@/utils/deliveryProcessor";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const GameDashboard = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
   const [showTableView, setShowTableView] = useState(false);
+  const [showManualEditor, setShowManualEditor] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const storedData = sessionStorage.getItem("deliveryData");
@@ -23,6 +27,15 @@ const GameDashboard = () => {
       setAssignedDeliveries(assigned);
     }
   }, []);
+
+  const handleManualUpdate = (updatedDeliveries: AssignedDelivery[]) => {
+    setAssignedDeliveries(updatedDeliveries);
+    sessionStorage.setItem("deliveryData", JSON.stringify(updatedDeliveries));
+    toast({
+      title: "Success",
+      description: "Manual assignments saved successfully",
+    });
+  };
 
   const totalDrivers = new Set(assignedDeliveries.map(d => d.driver)).size;
   const totalVehicles = new Set(assignedDeliveries.map(d => d.vehicle)).size;
@@ -95,13 +108,23 @@ const GameDashboard = () => {
                   Click on any truck to view driver details and delivery list
                 </p>
               </div>
-              <Button 
-                onClick={() => setShowTableView(true)}
-                className="gap-2 gradient-primary text-white"
-              >
-                <TableIcon className="h-4 w-4" />
-                Table View
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => setShowTableView(true)}
+                  className="gap-2 gradient-primary text-white"
+                >
+                  <TableIcon className="h-4 w-4" />
+                  Table View
+                </Button>
+                <Button 
+                  onClick={() => setShowManualEditor(true)}
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Edit className="h-4 w-4" />
+                  Manual Assignment
+                </Button>
+              </div>
             </div>
             
             <AnimatedRoad deliveries={assignedDeliveries} />
@@ -116,6 +139,17 @@ const GameDashboard = () => {
             <DialogTitle>Delivery Assignments - Table View</DialogTitle>
           </DialogHeader>
           <DeliveryTable deliveries={assignedDeliveries} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Manual Editor Dialog */}
+      <Dialog open={showManualEditor} onOpenChange={setShowManualEditor}>
+        <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
+          <ManualEditor 
+            deliveries={assignedDeliveries}
+            onUpdate={handleManualUpdate}
+            onClose={() => setShowManualEditor(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>
