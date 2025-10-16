@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Users, Phone, MapPin, Package, Mail, MessageSquare } from "lucide-react";
+import { Users, Phone, MapPin, Package, Mail, MessageSquare, Search } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers, groupByDriver } from "@/utils/deliveryProcessor";
@@ -10,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const Drivers = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -21,7 +23,10 @@ const Drivers = () => {
     }
   }, []);
 
-  const driverGroups = groupByDriver(assignedDeliveries);
+  const driverGroups = groupByDriver(assignedDeliveries).filter(group =>
+    group.driver.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    group.vehicle.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleContact = (driver: string, method: string) => {
     toast({
@@ -35,7 +40,16 @@ const Drivers = () => {
       <div className="container mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Drivers Management</h1>
-          <p className="text-muted-foreground">Manage and monitor your delivery drivers</p>
+          <p className="text-muted-foreground mb-4">Manage and monitor your delivery drivers</p>
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search drivers or vehicles..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
+          </div>
         </div>
 
         {driverGroups.length === 0 ? (

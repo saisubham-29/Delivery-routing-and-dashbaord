@@ -11,7 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Download, Search } from "lucide-react";
 import { AssignedDelivery } from "@/types/delivery";
 import { groupByPincode, groupByDriver } from "@/utils/deliveryProcessor";
 import { useToast } from "@/hooks/use-toast";
@@ -22,10 +23,20 @@ interface DeliveryTableProps {
 
 export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
   const [activeTab, setActiveTab] = useState("pincode");
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   
-  const pincodeGroups = groupByPincode(deliveries);
-  const driverGroups = groupByDriver(deliveries);
+  const filteredDeliveries = deliveries.filter(d =>
+    d.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    d.customerId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    d.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    d.pincode.includes(searchTerm) ||
+    d.driver.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    d.vehicle.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  const pincodeGroups = groupByPincode(filteredDeliveries);
+  const driverGroups = groupByDriver(filteredDeliveries);
 
   const downloadCSV = () => {
     const headers = ["ID", "Customer ID", "Address", "Pincode", "Cylinder Type", "Priority", "Driver", "Vehicle", "Status"];
@@ -59,12 +70,21 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <CardTitle>Delivery Assignments</CardTitle>
           <Button onClick={downloadCSV} className="gap-2">
             <Download className="h-4 w-4" />
             Export CSV
           </Button>
+        </div>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by ID, customer, address, pincode, driver, or vehicle..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
         </div>
       </CardHeader>
       <CardContent>

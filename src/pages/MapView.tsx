@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { Map, MapPin, Navigation } from "lucide-react";
+import { Map, MapPin, Navigation, Search } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers, groupByPincode } from "@/utils/deliveryProcessor";
 
 const MapView = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const storedData = sessionStorage.getItem("deliveryData");
@@ -17,14 +19,26 @@ const MapView = () => {
     }
   }, []);
 
-  const pincodeGroups = groupByPincode(assignedDeliveries);
+  const pincodeGroups = groupByPincode(assignedDeliveries).filter(group =>
+    group.pincode.includes(searchTerm) ||
+    group.deliveries.some(d => d.driver.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   return (
     <div className="min-h-screen p-8">
       <div className="container mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Map View</h1>
-          <p className="text-muted-foreground">Visualize delivery routes by pincode</p>
+          <p className="text-muted-foreground mb-4">Visualize delivery routes by pincode</p>
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by pincode or driver..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
+          </div>
         </div>
 
         {pincodeGroups.length === 0 ? (

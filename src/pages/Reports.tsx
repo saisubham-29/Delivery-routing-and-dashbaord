@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
-import { FileText, TrendingUp, Package, Users, Truck, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { FileText, TrendingUp, Package, Users, Truck, CheckCircle, Clock, AlertCircle, Download, Filter } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers } from "@/utils/deliveryProcessor";
 import { DeliveryChart } from "@/components/DeliveryChart";
+import { useToast } from "@/hooks/use-toast";
 
 const Reports = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     const storedData = sessionStorage.getItem("deliveryData");
@@ -42,12 +46,48 @@ const Reports = () => {
     { title: "Avg per Driver", value: avgDeliveriesPerDriver, icon: TrendingUp, color: "text-success" },
   ];
 
+  const downloadReport = () => {
+    const reportData = {
+      generatedAt: new Date().toISOString(),
+      totalDeliveries: assignedDeliveries.length,
+      delivered: deliveredCount,
+      inProgress: inProgressCount,
+      pending: pendingCount,
+      successRate: successRate.toFixed(2),
+      drivers: totalDrivers,
+      vehicles: totalVehicles,
+      coverageAreas: totalPincodes,
+      avgPerDriver: avgDeliveriesPerDriver,
+    };
+    
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `delivery-report-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Report Downloaded",
+      description: "Analytics report exported successfully",
+    });
+  };
+
   return (
     <div className="min-h-screen p-8">
       <div className="container mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Reports & Analytics</h1>
-          <p className="text-muted-foreground">View detailed reports and insights</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Reports & Analytics</h1>
+            <p className="text-muted-foreground">View detailed reports and insights</p>
+          </div>
+          {assignedDeliveries.length > 0 && (
+            <Button onClick={downloadReport} className="gap-2">
+              <Download className="h-4 w-4" />
+              Download Report
+            </Button>
+          )}
         </div>
 
         {assignedDeliveries.length === 0 ? (

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Truck, Package, Users, MapPin, Navigation, Activity } from "lucide-react";
+import { Truck, Package, Users, MapPin, Navigation, Activity, Search } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers } from "@/utils/deliveryProcessor";
@@ -10,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const Vehicles = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -42,14 +44,26 @@ const Vehicles = () => {
     return acc;
   }, {} as Record<string, { vehicle: string; drivers: Set<string>; deliveries: AssignedDelivery[] }>);
 
-  const vehicles = Object.values(vehicleGroups);
+  const vehicles = Object.values(vehicleGroups).filter(v =>
+    v.vehicle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    Array.from(v.drivers).some(d => d.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   return (
     <div className="min-h-screen p-8">
       <div className="container mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Fleet Management</h1>
-          <p className="text-muted-foreground">Track and manage your delivery vehicles</p>
+          <p className="text-muted-foreground mb-4">Track and manage your delivery vehicles</p>
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search vehicles or drivers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
+          </div>
         </div>
 
         {vehicles.length === 0 ? (
