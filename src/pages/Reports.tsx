@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { FileText, TrendingUp, Package, Users, Truck, CheckCircle, Clock, AlertCircle, Download, Filter } from "lucide-react";
+import { FileText, TrendingUp, Package, Users, Truck, CheckCircle, Clock, AlertCircle, Download, Filter, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ManualEditor } from "@/components/ManualEditor";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers } from "@/utils/deliveryProcessor";
 import { DeliveryChart } from "@/components/DeliveryChart";
@@ -11,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const Reports = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
+  const [showManualEditor, setShowManualEditor] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -74,6 +77,15 @@ const Reports = () => {
     });
   };
 
+  const handleManualUpdate = (updatedDeliveries: AssignedDelivery[]) => {
+    setAssignedDeliveries(updatedDeliveries);
+    sessionStorage.setItem("deliveryData", JSON.stringify(updatedDeliveries));
+    toast({
+      title: "Success",
+      description: "Manual assignments saved successfully",
+    });
+  };
+
   return (
     <div className="min-h-screen p-8">
       <div className="container mx-auto">
@@ -83,10 +95,19 @@ const Reports = () => {
             <p className="text-muted-foreground">View detailed reports and insights</p>
           </div>
           {assignedDeliveries.length > 0 && (
-            <Button onClick={downloadReport} className="gap-2">
-              <Download className="h-4 w-4" />
-              Download Report
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={downloadReport} variant="outline" className="gap-2">
+                <Download className="h-4 w-4" />
+                Download Report
+              </Button>
+              <Button 
+                onClick={() => setShowManualEditor(true)}
+                className="gap-2"
+              >
+                <Edit className="h-4 w-4" />
+                Edit Assignments
+              </Button>
+            </div>
           )}
         </div>
 
@@ -189,6 +210,17 @@ const Reports = () => {
             <DeliveryChart deliveries={assignedDeliveries} />
           </div>
         )}
+
+        {/* Manual Editor Dialog */}
+        <Dialog open={showManualEditor} onOpenChange={setShowManualEditor}>
+          <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
+            <ManualEditor 
+              deliveries={assignedDeliveries}
+              onUpdate={handleManualUpdate}
+              onClose={() => setShowManualEditor(false)}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

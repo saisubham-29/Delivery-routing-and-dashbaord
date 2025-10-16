@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Users, Phone, MapPin, Package, Mail, MessageSquare, Search } from "lucide-react";
+import { Users, Phone, MapPin, Package, Mail, MessageSquare, Search, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ManualEditor } from "@/components/ManualEditor";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers, groupByDriver } from "@/utils/deliveryProcessor";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 const Drivers = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showManualEditor, setShowManualEditor] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -35,12 +38,32 @@ const Drivers = () => {
     });
   };
 
+  const handleManualUpdate = (updatedDeliveries: AssignedDelivery[]) => {
+    setAssignedDeliveries(updatedDeliveries);
+    sessionStorage.setItem("deliveryData", JSON.stringify(updatedDeliveries));
+    toast({
+      title: "Success",
+      description: "Manual assignments saved successfully",
+    });
+  };
+
   return (
     <div className="min-h-screen p-8">
       <div className="container mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Drivers Management</h1>
-          <p className="text-muted-foreground mb-4">Manage and monitor your delivery drivers</p>
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">Drivers Management</h1>
+              <p className="text-muted-foreground">Manage and monitor your delivery drivers</p>
+            </div>
+            <Button 
+              onClick={() => setShowManualEditor(true)}
+              className="gap-2"
+            >
+              <Edit className="h-4 w-4" />
+              Edit Assignments
+            </Button>
+          </div>
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -137,6 +160,17 @@ const Drivers = () => {
             })}
           </div>
         )}
+
+        {/* Manual Editor Dialog */}
+        <Dialog open={showManualEditor} onOpenChange={setShowManualEditor}>
+          <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
+            <ManualEditor 
+              deliveries={assignedDeliveries}
+              onUpdate={handleManualUpdate}
+              onClose={() => setShowManualEditor(false)}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
