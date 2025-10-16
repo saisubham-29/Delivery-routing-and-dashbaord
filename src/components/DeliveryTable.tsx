@@ -12,11 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Download, Search, Eye } from "lucide-react";
+import { Download, Search } from "lucide-react";
 import { AssignedDelivery } from "@/types/delivery";
 import { groupByPincode, groupByDriver } from "@/utils/deliveryProcessor";
 import { useToast } from "@/hooks/use-toast";
-import { QuickViewModal } from "@/components/QuickViewModal";
 
 interface DeliveryTableProps {
   deliveries: AssignedDelivery[];
@@ -25,7 +24,6 @@ interface DeliveryTableProps {
 export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
   const [activeTab, setActiveTab] = useState("pincode");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDelivery, setSelectedDelivery] = useState<AssignedDelivery | null>(null);
   const { toast } = useToast();
   
   const filteredDeliveries = deliveries.filter(d =>
@@ -115,7 +113,6 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                         <TableHead>Priority</TableHead>
                         <TableHead>Driver</TableHead>
                         <TableHead>Vehicle</TableHead>
-                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -135,15 +132,6 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                           </TableCell>
                           <TableCell>{delivery.driver}</TableCell>
                           <TableCell>{delivery.vehicle}</TableCell>
-                          <TableCell>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setSelectedDelivery(delivery)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -177,7 +165,6 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                         <TableHead>Pincode</TableHead>
                         <TableHead>Cylinder Type</TableHead>
                         <TableHead>Priority</TableHead>
-                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -195,15 +182,6 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                             }>
                               {delivery.priority || "Medium"}
                             </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setSelectedDelivery(delivery)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -227,11 +205,10 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                     <TableHead>Priority</TableHead>
                     <TableHead>Driver</TableHead>
                     <TableHead>Vehicle</TableHead>
-                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredDeliveries.map((delivery, idx) => (
+                  {deliveries.map((delivery, idx) => (
                     <TableRow key={idx}>
                       <TableCell className="font-mono text-xs">{delivery.id}</TableCell>
                       <TableCell className="font-medium">{delivery.customerId}</TableCell>
@@ -248,15 +225,6 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
                       </TableCell>
                       <TableCell>{delivery.driver}</TableCell>
                       <TableCell>{delivery.vehicle}</TableCell>
-                      <TableCell>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => setSelectedDelivery(delivery)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -265,11 +233,6 @@ export const DeliveryTable = ({ deliveries }: DeliveryTableProps) => {
           </TabsContent>
         </Tabs>
       </CardContent>
-
-      <QuickViewModal 
-        delivery={selectedDelivery} 
-        onClose={() => setSelectedDelivery(null)} 
-      />
     </Card>
   );
 };

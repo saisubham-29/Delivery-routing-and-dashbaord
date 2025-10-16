@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Package, Users, Truck, Upload, Table as TableIcon, Edit, FileText, Eye } from "lucide-react";
+import { Package, Users, Truck, Upload, Table as TableIcon, Edit } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AnimatedRoad } from "@/components/AnimatedRoad";
 import { DeliveryTable } from "@/components/DeliveryTable";
 import { ManualEditor } from "@/components/ManualEditor";
-import { RunsheetView } from "@/components/RunsheetView";
 import { AssignedDelivery, DeliveryData } from "@/types/delivery";
 import { assignDeliveriesToDrivers } from "@/utils/deliveryProcessor";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +16,6 @@ const GameDashboard = () => {
   const [assignedDeliveries, setAssignedDeliveries] = useState<AssignedDelivery[]>([]);
   const [showTableView, setShowTableView] = useState(false);
   const [showManualEditor, setShowManualEditor] = useState(false);
-  const [showRunsheetView, setShowRunsheetView] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -112,19 +110,11 @@ const GameDashboard = () => {
               </div>
               <div className="flex gap-2">
                 <Button 
-                  onClick={() => setShowRunsheetView(true)}
+                  onClick={() => setShowTableView(true)}
                   className="gap-2 gradient-primary text-white"
                 >
-                  <FileText className="h-4 w-4" />
-                  Runsheet
-                </Button>
-                <Button 
-                  onClick={() => setShowTableView(true)}
-                  variant="outline"
-                  className="gap-2"
-                >
-                  <Eye className="h-4 w-4" />
-                  Quick View
+                  <TableIcon className="h-4 w-4" />
+                  Table View
                 </Button>
                 <Button 
                   onClick={() => setShowManualEditor(true)}
@@ -132,7 +122,7 @@ const GameDashboard = () => {
                   className="gap-2"
                 >
                   <Edit className="h-4 w-4" />
-                  Edit
+                  Manual Assignment
                 </Button>
               </div>
             </div>
@@ -142,21 +132,11 @@ const GameDashboard = () => {
         </motion.div>
       </div>
 
-      {/* Runsheet View Dialog */}
-      <Dialog open={showRunsheetView} onOpenChange={setShowRunsheetView}>
-        <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Delivery Runsheets</DialogTitle>
-          </DialogHeader>
-          <RunsheetView deliveries={assignedDeliveries} />
-        </DialogContent>
-      </Dialog>
-
       {/* Table View Dialog */}
       <Dialog open={showTableView} onOpenChange={setShowTableView}>
         <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Delivery Assignments - Quick View</DialogTitle>
+            <DialogTitle>Delivery Assignments - Table View</DialogTitle>
           </DialogHeader>
           <DeliveryTable deliveries={assignedDeliveries} />
         </DialogContent>

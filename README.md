@@ -1,98 +1,73 @@
-# Delivery Routing and Dashboard
+# Welcome to your Lovable project
 
-## Overview
+## Project info
 
-Delivery Routing and Dashboard is a web-based solution designed to optimize delivery operations for logistics and e-commerce businesses. The project enables efficient planning, visualization, and tracking of delivery routes, providing real-time insights via an interactive dashboard. The goal is to minimize delivery times, reduce operational costs, and improve customer satisfaction.
+**URL**: https://lovable.dev/projects/1126a78e-34fb-4991-8a44-ab4409e6467a
 
-## Features
+## How can I edit this code?
 
-- **Route Optimization:** Calculates the most efficient delivery routes based on address data and constraints (e.g., time windows, vehicle capacity).
-- **Interactive Dashboard:** Visualizes delivery status, route maps, KPIs (Key Performance Indicators), and driver performance.
-- **Real-Time Tracking:** Monitors delivery progress using GPS data and updates the dashboard accordingly.
-- **Order Management:** Allows users to add, edit, and track delivery orders.
-- **Driver Assignment:** Automates assignment of orders to drivers based on location, availability, and load.
-- **Analytics & Reporting:** Generates reports on delivery metrics, including success rates, delays, and route efficiency.
+There are several ways of editing your application.
 
-## Technologies Used
+**Use Lovable**
 
-- **Frontend:** React.js / Vue.js (specify actual framework)
-- **Backend:** Node.js / Express / Python Flask (specify actual backend)
-- **Database:** MongoDB / PostgreSQL / MySQL (specify actual database)
-- **Mapping:** Google Maps API / Mapbox / OpenStreetMap
-- **Other:** Docker, REST APIs, WebSockets for real-time updates
+Simply visit the [Lovable Project](https://lovable.dev/projects/1126a78e-34fb-4991-8a44-ab4409e6467a) and start prompting.
 
-## Getting Started
+Changes made via Lovable will be committed automatically to this repo.
 
-### Prerequisites
+**Use your preferred IDE**
 
-- Node.js (or Python, depending on backend)
-- npm / yarn
-- MongoDB / PostgreSQL running locally or accessible via cloud
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-### Installation
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/saisubham-29/Delivery-routing-and-dashbaord.git
-   cd Delivery-routing-and-dashbaord
-   ```
+Follow these steps:
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-3. **Configure environment variables:**
-   - Create a `.env` file and set required variables (DB connection, API keys, etc.)
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-4. **Run the application:**
-   ```bash
-   npm start
-   # or
-   yarn start
-   ```
+# Step 3: Install the necessary dependencies.
+npm i
 
-## Usage
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
+```
 
-- Access the dashboard at `http://localhost:3000` (default).
-- Add delivery orders via the dashboard interface.
-- View optimized routes and assign drivers.
-- Track deliveries and review analytics.
+**Edit a file directly in GitHub**
 
-## API Endpoints
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-| Method | Endpoint          | Description                  |
-|--------|-------------------|------------------------------|
-| GET    | /api/routes       | Get optimized delivery routes|
-| POST   | /api/orders       | Add new delivery order       |
-| GET    | /api/drivers      | List available drivers       |
-| PUT    | /api/orders/:id   | Update delivery order        |
+**Use GitHub Codespaces**
 
-## Roadmap
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-- [ ] Add support for multiple depots
-- [ ] Integrate with external courier APIs
-- [ ] Mobile app for drivers
-- [ ] Predictive analytics for delivery times
+## What technologies are used for this project?
 
-## Contributing
+This project is built with:
 
-Contributions are welcome! Please open issues or submit pull requests for improvements.
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a pull request
+## How can I deploy this project?
 
-## License
+Simply open [Lovable](https://lovable.dev/projects/1126a78e-34fb-4991-8a44-ab4409e6467a) and click on Share -> Publish.
 
-Distributed under the MIT License. See `LICENSE` for more information.
+## Can I connect a custom domain to my Lovable project?
 
-## Contact
+Yes, you can!
 
-- Project Maintainer: [saisubham-29](https://github.com/saisubham-29)
-- Issues: [GitHub Issues](https://github.com/saisubham-29/Delivery-routing-and-dashbaord/issues)
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
